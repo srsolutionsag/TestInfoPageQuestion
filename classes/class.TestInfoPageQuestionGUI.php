@@ -51,8 +51,8 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 * @return integer A positive value, if one of the required fields wasn't set, else 0
 	 */
 	public function writePostData($always = false) {
-		$hasErrors = (!$always) ? $this->editQuestion(true) : false;
-		if (!$hasErrors) {
+		$hasErrors = (! $always) ? $this->editQuestion(true) : false;
+		if (! $hasErrors) {
 			$this->writeQuestionGenericPostData();
 			$this->saveTaxonomyAssignments();
 
@@ -90,7 +90,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 
 		if ($save) {
 			$form->setValuesByPost();
-			$errors = !$form->checkInput();
+			$errors = ! $form->checkInput();
 			$form->setValuesByPost(); // again, because checkInput now performs the whole stripSlashes handling and
 			// we need this if we don't want to have duplication of backslashes
 			if ($errors) {
@@ -98,7 +98,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 			}
 		}
 
-		if (!$checkonly) {
+		if (! $checkonly) {
 			$this->tpl->setVariable("QUESTION_DATA", $form->getHTML());
 		}
 
@@ -220,6 +220,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 			$presentation = str_replace($obligatoryString, $replacement, $presentation);
 		}
 		$presentation = preg_replace("/src=\"\\.\\//ims", "src=\"" . ILIAS_HTTP_PATH . "/", $presentation);
+		$presentation = str_replace('ilc_question_Standard', '', $presentation);
 
 		return $presentation;
 	}
@@ -254,7 +255,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 *
 	 * @return string
 	 */
-	public function getPreview($show_question_only = false) {
+	public function getPreview($show_question_only = false, $showInlineFeedback = false) {
 		$questionoutput = $this->object->getQuestion();
 
 		return $questionoutput;
@@ -352,7 +353,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 
 			global $___test_express_mode;
 
-			if (!$_GET['test_express_mode'] && !$___test_express_mode) {
+			if (! $_GET['test_express_mode'] && ! $___test_express_mode) {
 				$ilTabs->setBackTarget($this->lng->txt("backtocallingtest"), "ilias.php?baseClass=ilObjTestGUI&cmd=questions&ref_id=$ref_id");
 			} else {
 				$link = ilTestExpressPage::getReturnToPageLink();
