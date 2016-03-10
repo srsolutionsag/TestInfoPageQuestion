@@ -413,7 +413,7 @@ class TestInfoPageQuestion extends assQuestion {
 	 */
 	protected static function doesSolutionRecordsExist($active_id, $pass, $qid) {
 		global $ilDB;
-		$query = "SELECT COUNT(active_fi) cnt FROM tst_solutions WHERE active_fi = %s AND question_fi = %s ANDpass = %s";
+		$query = "SELECT COUNT(active_fi) cnt FROM tst_solutions WHERE active_fi = %s AND question_fi = %s AND pass = %s";
 		$res = $ilDB->queryF($query, array( 'integer', 'integer', 'integer' ), array( $active_id, $qid, $pass ));
 		$row = $ilDB->fetchAssoc($res);
 
