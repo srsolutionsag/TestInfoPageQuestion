@@ -22,6 +22,7 @@ class TestInfoPageQuestion extends assQuestion {
 		return true;
 	}
 
+
 	/**
 	 * Returns true, if the question is complete for use
 	 *
@@ -29,10 +30,10 @@ class TestInfoPageQuestion extends assQuestion {
 	 */
 	public function isComplete() {
 		if (strlen($this->title)
-			&& ($this->author)
-			&& ($this->question)
-			&& ($this->getMaximumPoints() >= 0)
-			&& is_numeric($this->getMaximumPoints())
+		    && ($this->author)
+		    && ($this->question)
+		    && ($this->getMaximumPoints() >= 0)
+		    && is_numeric($this->getMaximumPoints())
 		) {
 			return true;
 		}
@@ -90,15 +91,15 @@ class TestInfoPageQuestion extends assQuestion {
 
 
 	/**
-	 * @param bool   $for_test
+	 * @param bool $for_test
 	 * @param string $title
 	 * @param string $author
 	 * @param string $owner
-	 * @param null   $testObjId
+	 * @param null $testObjId
 	 *
 	 * @return int
 	 */
-	public function duplicate($for_test = true, $title = "", $author = "", $owner = "", $testObjId = NULL) {
+	public function duplicate($for_test = true, $title = "", $author = "", $owner = "", $testObjId = null) {
 		if ($this->id <= 0) {
 			return false;
 		}
@@ -235,7 +236,7 @@ class TestInfoPageQuestion extends assQuestion {
 	 *
 	 * @return integer/array $points/$details (array $details is deprecated !!)
 	 */
-	public function calculateReachedPoints($active_id, $pass = NULL, $returndetails = false) {
+	public function calculateReachedPoints($active_id, $pass = NULL, $authorizedSolution = true, $returndetails = FALSE) {
 		return 0;
 	}
 
@@ -250,8 +251,7 @@ class TestInfoPageQuestion extends assQuestion {
 	 *
 	 * @return boolean $status
 	 */
-	public function saveWorkingData($active_id, $pass = NULL) {
-
+	public function saveWorkingData($active_id, $pass = NULL, $authorized = true) {
 		return true;
 	}
 
@@ -353,17 +353,17 @@ class TestInfoPageQuestion extends assQuestion {
 		//			$i ++;
 		//		}
 
-		return $startrow + $i + 1;
+		return $startrow  + 1;
 	}
 
 
 	/**
 	 * @param object $item
-	 * @param int    $questionpool_id
-	 * @param int    $tst_id
+	 * @param int $questionpool_id
+	 * @param int $tst_id
 	 * @param object $tst_object
-	 * @param int    $question_counter
-	 * @param array  $import_mapping
+	 * @param int $question_counter
+	 * @param array $import_mapping
 	 */
 	public function fromXML(&$item, &$questionpool_id, &$tst_id, &$tst_object, &$question_counter, &$import_mapping) {
 		// TODO Import XML
@@ -392,15 +392,31 @@ class TestInfoPageQuestion extends assQuestion {
 
 
 	/**
-	 * @param int      $active_id
+	 * @param int $active_id
 	 * @param int|null $pass
 	 *
 	 * @return bool
 	 */
 	public function isAnswered($active_id, $pass) {
-		$answered = assQuestion::doesSolutionRecordsExist($active_id, $pass, $this->getId());
+		$answered = self::doesSolutionRecordsExist($active_id, $pass, $this->getId());
 
 		return $answered;
+	}
+
+
+	/**
+	 * @param $active_id
+	 * @param $pass
+	 * @param $qid
+	 * @return bool
+	 */
+	protected static function doesSolutionRecordsExist($active_id, $pass, $qid) {
+		global $ilDB;
+		$query = "SELECT COUNT(active_fi) cnt FROM tst_solutions WHERE active_fi = %s AND question_fi = %s AND pass = %s";
+		$res = $ilDB->queryF($query, array( 'integer', 'integer', 'integer' ), array( $active_id, $qid, $pass ));
+		$row = $ilDB->fetchAssoc($res);
+
+		return (0 < (int)$row['cnt'] ? true : false);
 	}
 
 
@@ -414,206 +430,10 @@ class TestInfoPageQuestion extends assQuestion {
 	}
 
 
+	/**
+	 * @return bool
+	 */
 	public function isAutosaveable() {
 		return false;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//	/**
-	//	 * @param string $question_text
-	//	 */
-	//	public function setQuestionText($question_text) {
-	//		$this->question_text = $question_text;
-	//	}
-	//
-	//
-	//	/**
-	//	 * @return string
-	//	 */
-	//	public function getQuestionText() {
-	//		return $this->question_text;
-	//	}
-	//
-	//
-	//	/**
-	//	 * @var string
-	//	 */
-	//	protected $question_text = '';
-	//
-	//
-	//	/**
-	//	 * Saves the learners input of the question to the database.
-	//	 *
-	//	 * @access public
-	//	 *
-	//	 * @param integer $active_id Active id of the user
-	//	 * @param integer $pass      Test pass
-	//	 *
-	//	 * @return boolean $status
-	//	 */
-	//	public function saveWorkingData($active_id, $pass = NULL) {
-	//		// TODO: Implement saveWorkingData() method.
-	//	}
-	//
-	//
-	//	/**
-	//	 * Reworks the allready saved working data if neccessary
-	//	 *
-	//	 * @access protected
-	//	 *
-	//	 * @param integer $active_id
-	//	 * @param integer $pass
-	//	 * @param boolean $obligationsAnswered
-	//	 *
-	//	 * @return bool
-	//	 */
-	//	protected function reworkWorkingData($active_id, $pass, $obligationsAnswered) {
-	//		return false;
-	//	}
-	//
-	//
-	//	/**
-	//	 * Returns the points, a learner has reached answering the question.
-	//	 * The points are calculated from the given answers.
-	//	 *
-	//	 * @access public
-	//	 *
-	//	 * @param integer $active_id
-	//	 * @param integer $pass
-	//	 * @param boolean $returndetails (deprecated !!)
-	//	 *
-	//	 * @return integer/array $points/$details (array $details is deprecated !!)
-	//	 */
-	//	public function calculateReachedPoints($active_id, $pass = NULL, $returndetails = false) {
-	//		return 1;
-	//	}
-	//
-	//
-	//	/**
-	//	 * @param array $post_data
-	//	 * @param       $survey_id
-	//	 *
-	//	 * @return string
-	//	 */
-	//	public function checkUserInput(array $post_data, $survey_id) {
-	//		unset($post_data);
-	//		unset($survey_id);
-	//
-	//		return "";
-	//	}
-	//
-	//
-	//	/**
-	//	 * @param array $post_data
-	//	 * @param       $active_id
-	//	 * @param bool  $a_return
-	//	 */
-	//	public function saveUserInput(array $post_data, $active_id, $a_return = false) {
-	//		unset($post_data);
-	//		unset($active_id);
-	//		unset($a_return);
-	//	}
-	//
-	//
-	//	/**
-	//	 * @param $survey_id
-	//	 * @param $nr_of_users
-	//	 * @param $finished_ids
-	//	 *
-	//	 * @return int
-	//	 */
-	//	public function getCumulatedResults($survey_id, $nr_of_users, $finished_ids) {
-	//		unset($survey_id);
-	//		unset($nr_of_users);
-	//		unset($finished_ids);
-	//
-	//		return array();
-	//	}
-	//
-	//
-	//	/**
-	//	 * @param int $question_id
-	//	 */
-	//	public function loadFromDb($question_id) {
-	//		/**
-	//		 * //         * @var $ilDB ilDB
-	//		 * //         */
-	//		global $ilDB;
-	//		$sql = 'SELECT * FROM qpl_questions WHERE question_id = ' . $ilDB->quote($question_id, 'integer');;
-	//		$set = $ilDB->query($sql);
-	//		if ($ilDB->numRows($set)) {
-	//			$data = $ilDB->fetchAssoc($set);
-	//			$this->setId($question_id);
-	//			$this->setObjId($data["obj_fi"]);
-	//			$this->setTitle($data["title"]);
-	//			$this->setComment($data["description"]);
-	//			$this->setOriginalId($data["original_id"]);
-	//			$this->setNrOfTries($data['nr_of_tries']);
-	//			$this->setAuthor($data["author"]);
-	//			$this->setPoints($data["points"]);
-	//			$this->setOwner($data["owner"]);
-	//			$this->setQuestion(ilRTE::_replaceMediaObjectImageSrc($data["question_text"], 1));
-	//			$this->setShuffle($data["shuffle"]);
-	//			$this->matchcondition = (strlen($data['matchcondition'])) ? $data['matchcondition'] : 0;
-	//			$this->setEstimatedWorkingTime(substr($data["working_time"], 0, 2), substr($data["working_time"], 3, 2), substr($data["working_time"], 6, 2));
-	//		}
-	//
-	//		parent::loadFromDb($question_id);
-	//	}
-	//
-	//
-	//	/**
-	//	 * @return bool
-	//	 */
-	//	public function isComplete() {
-	//		return true;
-	//	}
-	//
-	//
-	//	/**
-	//	 * @return string
-	//	 */
-	//	public function getQuestionType() {
-	//		$plugin_object = new ilTestInfoPageQuestionPlugin();
-	//
-	//		return $plugin_object->getQuestionType();
-	//	}
-	//
-	//
-	//	/**
-	//	 * @var string
-	//	 */
-	//	protected $info_page_text = '';
-	//
-	//
-	//	/**
-	//	 * @param string $info_page_text
-	//	 */
-	//	public function setInfoPageText($info_page_text) {
-	//		$this->info_page_text = $info_page_text;
-	//	}
-	//
-	//
-	//	/**
-	//	 * @return string
-	//	 */
-	//	public function getInfoPageText() {
-	//		return $this->info_page_text;
-	//	}
 }
-
-?>

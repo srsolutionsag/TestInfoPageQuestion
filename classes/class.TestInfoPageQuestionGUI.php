@@ -148,12 +148,12 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 *
 	 * @deprecated
 	 */
-	public function outQuestionForTest($formaction, $active_id, $pass = NULL, $is_postponed = false, $use_post_solutions = false, $show_feedback = false) {
-		$questionoutput = $this->object->getQuestion();
-		$pageoutput = $this->outQuestionPage("", $is_postponed, $active_id, $questionoutput);
-		$this->tpl->setVariable("QUESTION_OUTPUT", $pageoutput);
-		$this->tpl->setVariable("FORMACTION", $formaction);
-	}
+//	public function outQuestionForTest($formaction, $active_id, $pass = NULL, $is_postponed = false, $use_post_solutions = false, $show_feedback = false) {
+//		$questionoutput = $this->object->getQuestion();
+//		$pageoutput = $this->outQuestionPage("", $is_postponed, $active_id, $questionoutput);
+//		$this->tpl->setVariable("QUESTION_OUTPUT", $pageoutput);
+//		$this->tpl->setVariable("FORMACTION", $formaction);
+//	}
 
 
 	/**
@@ -305,7 +305,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 					"edit",
 					"insert",
 					"exec_pg"
-				), "", "", $force_active);
+				), "", "", false);
 			}
 
 			$this->addTab_QuestionPreview($ilTabs);
