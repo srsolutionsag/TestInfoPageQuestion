@@ -37,6 +37,11 @@ class TestInfoPageQuestionFeedback {
 
 	public function syncFeedback() {
 	}
+
+
+	public function getGenericFeedbackTestPresentation() {
+
+	}
 }
 
 ?>
