@@ -436,4 +436,14 @@ class TestInfoPageQuestion extends assQuestion {
 	public function isAutosaveable() {
 		return false;
 	}
+
+
+	public function getSolutionSubmit() {
+		return null;
+	}
+
+
+	public function calculateReachedPointsForSolution() {
+		return 0;
+	}
 }
