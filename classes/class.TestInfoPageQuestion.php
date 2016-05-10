@@ -236,7 +236,7 @@ class TestInfoPageQuestion extends assQuestion {
 	 *
 	 * @return integer/array $points/$details (array $details is deprecated !!)
 	 */
-	public function calculateReachedPoints($active_id, $pass = null, $returndetails = false) {
+	public function calculateReachedPoints($active_id, $pass = NULL, $authorizedSolution = true, $returndetails = FALSE) {
 		return 0;
 	}
 
@@ -251,8 +251,7 @@ class TestInfoPageQuestion extends assQuestion {
 	 *
 	 * @return boolean $status
 	 */
-	public function saveWorkingData($active_id, $pass = null) {
-
+	public function saveWorkingData($active_id, $pass = NULL, $authorized = true) {
 		return true;
 	}
 
@@ -354,7 +353,7 @@ class TestInfoPageQuestion extends assQuestion {
 		//			$i ++;
 		//		}
 
-		return $startrow + $i + 1;
+		return $startrow  + 1;
 	}
 
 
