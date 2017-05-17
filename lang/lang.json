@@ -1,0 +1,26 @@
+{
+    "plugin_prefix": "qpl_qst_infopageta",
+    "languages": [
+        "de",
+        "en"
+    ],
+    "entries": {
+        "common": {
+            "question_type": {
+                "translations": {
+                    "de": "Info-Seite",
+                    "en": "Info-Page"
+                },
+                "last_used": "17.05.2017"
+            }
+        },
+        "field": {
+            "info_page": {
+                "translations": {
+                    "de": "Seitentext",
+                    "en": "Page text"
+                }
+            }
+        }
+    }
+}

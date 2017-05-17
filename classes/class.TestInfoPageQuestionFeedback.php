@@ -40,8 +40,5 @@ class TestInfoPageQuestionFeedback {
 
 
 	public function getGenericFeedbackTestPresentation() {
-
 	}
 }
-
-?>
