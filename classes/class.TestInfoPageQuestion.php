@@ -51,6 +51,7 @@ class TestInfoPageQuestion extends assQuestion {
 
 
 	/**
+	 * @param string $original_id
 	 * Saves a assFileUpload object to a database
 	 */
 	public function saveToDb($original_id = "") {
@@ -67,7 +68,8 @@ class TestInfoPageQuestion extends assQuestion {
 		 * @var $ilDB ilDB
 		 */
 		global $ilDB;
-		$sql = 'SELECT * FROM qpl_questions WHERE question_id = ' . $ilDB->quote($question_id, 'integer');;
+		$sql = 'SELECT * FROM qpl_questions WHERE question_id = '
+		       . $ilDB->quote($question_id, 'integer');;
 		$set = $ilDB->query($sql);
 		if ($ilDB->numRows($set)) {
 			$data = $ilDB->fetchAssoc($set);
@@ -232,11 +234,11 @@ class TestInfoPageQuestion extends assQuestion {
 	 *
 	 * @param integer $active_id
 	 * @param integer $pass
+	 * @param bool $authorizedSolution
 	 * @param boolean $returndetails (deprecated !!)
-	 *
-	 * @return integer/array $points/$details (array $details is deprecated !!)
+	 * @return int /array $points/$details (array $details is deprecated !!)
 	 */
-	public function calculateReachedPoints($active_id, $pass = NULL, $authorizedSolution = true, $returndetails = FALSE) {
+	public function calculateReachedPoints($active_id, $pass = null, $authorizedSolution = true, $returndetails = false) {
 		return 0;
 	}
 
@@ -249,9 +251,10 @@ class TestInfoPageQuestion extends assQuestion {
 	 * @param integer $active_id Active id of the user
 	 * @param integer $pass      Test pass
 	 *
-	 * @return boolean $status
+	 * @param bool $authorized
+	 * @return bool $status
 	 */
-	public function saveWorkingData($active_id, $pass = NULL, $authorized = true) {
+	public function saveWorkingData($active_id, $pass = null, $authorized = true) {
 		return true;
 	}
 
@@ -264,8 +267,9 @@ class TestInfoPageQuestion extends assQuestion {
 	 * @param integer $active_id
 	 * @param integer $pass
 	 * @param boolean $obligationsAnswered
+	 * @param bool $authorized
 	 */
-	protected function reworkWorkingData($active_id, $pass, $obligationsAnswered) {
+	protected function reworkWorkingData($active_id, $pass, $obligationsAnswered, $authorized) {
 		$this->handleSubmission($active_id, $pass, $obligationsAnswered);
 	}
 
@@ -285,8 +289,6 @@ class TestInfoPageQuestion extends assQuestion {
 	 * @access    protected
 	 */
 	protected function handleSubmission($active_id, $pass, $obligationsAnswered) {
-		global $ilObjDataCache;
-
 		if ($this->isCompletionBySubmissionEnabled()) {
 			$maxpoints = assQuestion::_getMaximumPoints($this->getId());
 			assQuestion::_setReachedPoints($active_id, $this->getId(), 0, $maxpoints, $pass, 1, $obligationsAnswered);
@@ -333,27 +335,11 @@ class TestInfoPageQuestion extends assQuestion {
 	 * @param object $startrow
 	 * @param object $active_id
 	 * @param object $pass
-	 * @param object $format_title
-	 * @param object $format_bold
-	 *
 	 * @return object
 	 */
-	public function setExportDetailsXLS(&$worksheet, $startrow, $active_id, $pass, &$format_title, &$format_bold) {
-		//		include_once("./Services/Excel/classes/class.ilExcelUtils.php");
-		//		$worksheet->writeString($startrow, 0, ilExcelUtils::_convert_text($this->lng->txt($this->getQuestionType())), $format_title);
-		//		$worksheet->writeString($startrow, 1, ilExcelUtils::_convert_text($this->getTitle()), $format_title);
-		//		$i = 1;
-		//		$solutions = $this->getSolutionValues($active_id, $pass);
-		//		foreach ($solutions as $solution) {
-		//			$worksheet->writeString($startrow + $i, 0, ilExcelUtils::_convert_text($this->lng->txt("result")), $format_bold);
-		//			if (strlen($solution["value1"])) {
-		//				$worksheet->write($startrow + $i, 1, ilExcelUtils::_convert_text($solution["value1"]));
-		//				$worksheet->write($startrow + $i, 2, ilExcelUtils::_convert_text($solution["value2"]));
-		//			}
-		//			$i ++;
-		//		}
+	public function setExportDetailsXLS($worksheet, $startrow, $active_id, $pass) {
 
-		return $startrow  + 1;
+		return $startrow + 1;
 	}
 
 
@@ -372,6 +358,13 @@ class TestInfoPageQuestion extends assQuestion {
 
 	/**
 	 * string The QTI xml representation of the question
+	 *
+	 * @param bool $a_include_header
+	 * @param bool $a_include_binary
+	 * @param bool $a_shuffle
+	 * @param bool $test_output
+	 * @param bool $force_image_references
+	 * @return string|void
 	 */
 	public function toXML($a_include_header = true, $a_include_binary = true, $a_shuffle = false, $test_output = false, $force_image_references = false) {
 		// TODO Export XML
@@ -397,7 +390,7 @@ class TestInfoPageQuestion extends assQuestion {
 	 *
 	 * @return bool
 	 */
-	public function isAnswered($active_id, $pass) {
+	public function isAnswered($active_id, $pass = null) {
 		$answered = self::doesSolutionRecordsExist($active_id, $pass, $this->getId());
 
 		return $answered;
@@ -413,7 +406,11 @@ class TestInfoPageQuestion extends assQuestion {
 	protected static function doesSolutionRecordsExist($active_id, $pass, $qid) {
 		global $ilDB;
 		$query = "SELECT COUNT(active_fi) cnt FROM tst_solutions WHERE active_fi = %s AND question_fi = %s AND pass = %s";
-		$res = $ilDB->queryF($query, array( 'integer', 'integer', 'integer' ), array( $active_id, $qid, $pass ));
+		$res = $ilDB->queryF($query, array( 'integer', 'integer', 'integer' ), array(
+			$active_id,
+			$qid,
+			$pass,
+		));
 		$row = $ilDB->fetchAssoc($res);
 
 		return (0 < (int)$row['cnt'] ? true : false);
