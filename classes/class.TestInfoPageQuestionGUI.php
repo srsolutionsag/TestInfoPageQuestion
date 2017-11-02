@@ -11,6 +11,7 @@ require_once('./Services/AdvancedEditing/classes/class.ilObjAdvancedEditing.php'
  *
  * @ilCtrl_IsCalledBy TestInfoPageQuestionGUI: ilObjQuestionPoolGUI, ilObjTestGUI
  * @ilCtrl_IsCalledBy TestInfoPageQuestionGUI: ilQuestionEditGUI, ilTestExpressPageObjectGUI
+ * @ilCtrl_Calls TestInfoPageQuestionGUI: ilFormPropertyDispatchGUI
  */
 class TestInfoPageQuestionGUI extends assQuestionGUI {
 
