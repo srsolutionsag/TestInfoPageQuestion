@@ -41,4 +41,7 @@ class TestInfoPageQuestionFeedback {
 
 	public function getGenericFeedbackTestPresentation() {
 	}
+
+	public function getAllSpecificAnswerFeedbackContents() {
+	}
 }
