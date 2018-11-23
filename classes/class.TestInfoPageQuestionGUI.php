@@ -288,14 +288,13 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 * @return string
 	 */
 	public function getTestOutput($active_id, $pass = null, $is_postponed = false, $use_post_solutions = false, $show_feedback = false) {
-			// generate the question output
-			include_once "./Services/UICore/classes/class.ilTemplate.php";
-			$template = $this->plugin_object->getTemplate("tpl.il_as_qpl_info_page_output.html");
-			$questiontext = $this->object->getQuestion();
-			$template->setVariable("QUESTIONTEXT", $this->object->prepareTextareaOutput($questiontext, TRUE));
-			$questionoutput = $template->get();
-			$pageoutput = $this->outQuestionPage("", $is_postponed, $active_id, $questionoutput);
-			return $pageoutput;
+		include_once "./Services/UICore/classes/class.ilTemplate.php";
+		$template = $this->plugin_object->getTemplate("tpl.il_as_qpl_info_page_output.html");
+		$questiontext = $this->object->getQuestion();
+		$template->setVariable("QUESTIONTEXT", $this->object->prepareTextareaOutput($questiontext, TRUE));
+		$questionoutput = $template->get();
+		$pageoutput = $this->outQuestionPage("", $is_postponed, $active_id, $questionoutput);
+		return $pageoutput;
 	}
 
 
