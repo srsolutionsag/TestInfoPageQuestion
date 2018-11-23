@@ -190,7 +190,8 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		$page_gui->setOutputMode("print");
 
 		include_once "./Modules/Test/classes/class.ilObjTest.php";
-		$title_output = ilObjTest::_getTitleOutput($active_id);
+		$ilObjTest = new ilObjTest();
+		$title_output = $ilObjTest->_getTitleOutput($active_id);
 
 		if ($this->object->areObligationsToBeConsidered()
 		    && ilObjTest::isQuestionObligatory($this->object->getId())
@@ -287,9 +288,14 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 * @return string
 	 */
 	public function getTestOutput($active_id, $pass = null, $is_postponed = false, $use_post_solutions = false, $show_feedback = false) {
-		$pageoutput = $this->object->getQuestion();
-
-		return $pageoutput;
+			// generate the question output
+			include_once "./Services/UICore/classes/class.ilTemplate.php";
+			$template = $this->plugin_object->getTemplate("tpl.il_as_qpl_info_page_output.html");
+			$questiontext = $this->object->getQuestion();
+			$template->setVariable("QUESTIONTEXT", $this->object->prepareTextareaOutput($questiontext, TRUE));
+			$questionoutput = $template->get();
+			$pageoutput = $this->outQuestionPage("", $is_postponed, $active_id, $questionoutput);
+			return $pageoutput;
 	}
 
 
