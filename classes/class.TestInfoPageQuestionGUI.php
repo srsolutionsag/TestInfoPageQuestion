@@ -11,7 +11,7 @@ require_once('./Services/AdvancedEditing/classes/class.ilObjAdvancedEditing.php'
  *
  * @ilCtrl_IsCalledBy TestInfoPageQuestionGUI: ilObjQuestionPoolGUI, ilObjTestGUI
  * @ilCtrl_IsCalledBy TestInfoPageQuestionGUI: ilQuestionEditGUI, ilTestExpressPageObjectGUI
- * @ilCtrl_Calls TestInfoPageQuestionGUI: ilFormPropertyDispatchGUI
+ * @ilCtrl_Calls      TestInfoPageQuestionGUI: ilFormPropertyDispatchGUI
  */
 class TestInfoPageQuestionGUI extends assQuestionGUI {
 
@@ -37,7 +37,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	/**
 	 * @param $a_id
 	 */
-	public function __construct($a_id = - 1) {
+	public function __construct($a_id = -1) {
 		$this->id = $a_id;
 		parent::__construct();
 		$this->plugin_object = new ilTestInfoPageQuestionPlugin();
@@ -77,7 +77,9 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 * Creates an output of the edit form for the question
 	 *
 	 * @access public
+	 *
 	 * @param bool $checkonly
+	 *
 	 * @return bool
 	 */
 	public function editQuestion($checkonly = false) {
@@ -167,13 +169,14 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 
 	/**
 	 * @param        $a_temp_var
-	 * @param bool $a_postponed
+	 * @param bool   $a_postponed
 	 * @param string $active_id
 	 * @param string $html
+	 * @param bool   $inlineFeedbackEnabled
 	 *
 	 * @return mixed|string
 	 */
-	public function outQuestionPage($a_temp_var, $a_postponed = false, $active_id = "", $html = "") {
+	public function outQuestionPage($a_temp_var, $a_postponed = false, $active_id = "", $html = "", $inlineFeedbackEnabled = false) {
 		$postponed = "";
 		if ($a_postponed) {
 			$postponed = " (" . $this->lng->txt("postponed") . ")";
@@ -184,7 +187,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		$page_gui = new ilAssQuestionPageGUI($this->object->getId());
 		$page_gui->setTemplateTargetVar($a_temp_var);
 		if (strlen($html)) {
-			$page_gui->setQuestionHTML(array( $this->object->getId() => $html ));
+			$page_gui->setQuestionHTML(array($this->object->getId() => $html));
 		}
 
 		$page_gui->setOutputMode("print");
@@ -194,7 +197,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		$title_output = $ilObjTest->_getTitleOutput($active_id);
 
 		if ($this->object->areObligationsToBeConsidered()
-		    && ilObjTest::isQuestionObligatory($this->object->getId())
+			&& ilObjTest::isQuestionObligatory($this->object->getId())
 		) {
 			$obligatoryString = '([-_-])';
 		} else {
@@ -203,13 +206,17 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 
 		switch ($title_output) {
 			case 1:
-				$page_gui->setPresentationTitle(sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
-				                                . " - " . $this->object->getTitle() . $postponed
-				                                . $obligatoryString);
+				$page_gui->setPresentationTitle(
+					sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
+					. " - " . $this->object->getTitle() . $postponed
+					. $obligatoryString
+				);
 				break;
 			case 2:
-				$page_gui->setPresentationTitle(sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
-				                                . $postponed . $obligatoryString);
+				$page_gui->setPresentationTitle(
+					sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
+					. $postponed . $obligatoryString
+				);
 				break;
 			case 0:
 			default:
@@ -219,9 +226,11 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 				} else {
 					$maxpoints = " (" . $maxpoints . " " . $this->lng->txt("points") . ")";
 				}
-				$page_gui->setPresentationTitle(sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
-				                                . " - " . $this->object->getTitle() . $postponed
-				                                . $maxpoints . $obligatoryString);
+				$page_gui->setPresentationTitle(
+					sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
+					. " - " . $this->object->getTitle() . $postponed
+					. $maxpoints . $obligatoryString
+				);
 				break;
 		}
 		$presentation = $page_gui->presentation();
@@ -230,11 +239,13 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		}
 		if (strlen($obligatoryString)) {
 			$replacement = '<br><span class="obligatory" style="font-size:small">'
-			               . $this->lng->txt("tst_you_have_to_answer_this_question") . '</span>';
+				. $this->lng->txt("tst_you_have_to_answer_this_question") . '</span>';
 			$presentation = str_replace($obligatoryString, $replacement, $presentation);
 		}
-		$presentation = preg_replace("/src=\"\\.\\//ims", "src=\"" . ILIAS_HTTP_PATH
-		                                                  . "/", $presentation);
+		$presentation = preg_replace(
+			"/src=\"\\.\\//ims", "src=\"" . ILIAS_HTTP_PATH
+			                   . "/", $presentation
+		);
 		$presentation = str_replace('ilc_question_Standard', '', $presentation);
 
 		return $presentation;
@@ -253,7 +264,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 * @param boolean $show_correct_solution Show the correct solution instead of the user solution
 	 * @param boolean $show_manual_scoring   Show specific information for the manual scoring output
 	 *
-	 * @param bool $show_question_text
+	 * @param bool    $show_question_text
 	 *
 	 * @return string The solution output of the question as HTML code
 	 */
@@ -269,6 +280,7 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 	 * @param bool $show_question_only
 	 *
 	 * @param bool $showInlineFeedback
+	 *
 	 * @return string
 	 */
 	public function getPreview($show_question_only = false, $showInlineFeedback = false) {
@@ -291,9 +303,10 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		include_once "./Services/UICore/classes/class.ilTemplate.php";
 		$template = $this->plugin_object->getTemplate("tpl.il_as_qpl_info_page_output.html");
 		$questiontext = $this->object->getQuestion();
-		$template->setVariable("QUESTIONTEXT", $this->object->prepareTextareaOutput($questiontext, TRUE));
+		$template->setVariable("QUESTIONTEXT", $this->object->prepareTextareaOutput($questiontext, true));
 		$questionoutput = $template->get();
 		$pageoutput = $this->outQuestionPage("", $is_postponed, $active_id, $questionoutput);
+
 		return $pageoutput;
 	}
 
@@ -321,11 +334,13 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		if ($_GET["q_id"]) {
 			if ($rbacsystem->checkAccess('write', $_GET["ref_id"])) {
 				// edit page
-				$ilTabs->addTarget("edit_page", $this->ctrl->getLinkTargetByClass("ilAssQuestionPageGUI", "edit"), array(
+				$ilTabs->addTarget(
+					"edit_page", $this->ctrl->getLinkTargetByClass("ilAssQuestionPageGUI", "edit"), array(
 					"edit",
 					"insert",
 					"exec_pg",
-				), "", "", false);
+				), "", "", false
+				);
 			}
 
 			$this->addTab_QuestionPreview($ilTabs);
@@ -337,12 +352,14 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 				$url = $this->ctrl->getLinkTargetByClass($classname, "editQuestion");
 			}
 			// edit question properties
-			$ilTabs->addTarget("edit_question", $url, array(
+			$ilTabs->addTarget(
+				"edit_question", $url, array(
 				"editQuestion",
 				"save",
 				"cancel",
 				"saveEdit",
-			), $classname, "");
+			), $classname, ""
+			);
 		}
 
 		// add tab for question feedback within common class assQuestionGUI
@@ -352,7 +369,8 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		$this->addTab_QuestionHints($ilTabs);
 
 		if ($_GET["q_id"]) {
-			$ilTabs->addTarget("solution_hint", $this->ctrl->getLinkTargetByClass($classname, "suggestedsolution"), array(
+			$ilTabs->addTarget(
+				"solution_hint", $this->ctrl->getLinkTargetByClass($classname, "suggestedsolution"), array(
 				"suggestedsolution",
 				"saveSuggestedSolution",
 				"outSolutionExplorer",
@@ -361,12 +379,13 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 				"cancelExplorer",
 				"linkChilds",
 				"removeSuggestedSolution",
-			), $classname, "");
+			), $classname, ""
+			);
 		}
 
 		// Assessment of questions sub menu entry
 		if ($_GET["q_id"]) {
-			$ilTabs->addTarget("statistics", $this->ctrl->getLinkTargetByClass($classname, "assessment"), array( "assessment" ), $classname, "");
+			$ilTabs->addTarget("statistics", $this->ctrl->getLinkTargetByClass($classname, "assessment"), array("assessment"), $classname, "");
 		}
 
 		if (($_GET["calling_test"] > 0) || ($_GET["test_ref_id"] > 0)) {
@@ -390,12 +409,17 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 
 
 	/**
-	 * @param int $active_id
-	 * @param int $pass
+	 * Returns the answer specific feedback for the question
 	 *
-	 * @return mixed|string
+	 * This method should be overwritten by the actual question.
+	 *
+	 * @param array $userSolution ($userSolution[<value1>] = <value2>)
+	 *
+	 * @return string HTML Code with the answer specific feedback
+	 * @access public
+	 * @todo   Mark this method abstract!
 	 */
-	public function getSpecificFeedbackOutput($active_id, $pass) {
+	public function getSpecificFeedbackOutput($userSolution) {
 		$output = "";
 
 		return $this->object->prepareTextareaOutput($output, true);
