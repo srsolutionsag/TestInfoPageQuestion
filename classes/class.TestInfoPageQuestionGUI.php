@@ -205,38 +205,30 @@ class TestInfoPageQuestionGUI extends assQuestionGUI {
 		}
 
 		switch ($title_output) {
-			case 1:
-				$page_gui->setPresentationTitle(
-					sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
-					. " - " . $this->object->getTitle() . $postponed
-					. $obligatoryString
-				);
-				break;
 			case 2:
 				$page_gui->setPresentationTitle(
-					sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
-					. $postponed . $obligatoryString
+					$postponed. $obligatoryString
 				);
 				break;
 			case 0:
+            case 1:
 			default:
-				$maxpoints = $this->object->getMaximumPoints();
-				if ($maxpoints == 1) {
-					$maxpoints = " (" . $maxpoints . " " . $this->lng->txt("point") . ")";
-				} else {
-					$maxpoints = " (" . $maxpoints . " " . $this->lng->txt("points") . ")";
-				}
 				$page_gui->setPresentationTitle(
-					sprintf($this->lng->txt("tst_position"), $this->getSequenceNumber(), $this->getQuestionCount())
-					. " - " . $this->object->getTitle() . $postponed
-					. $maxpoints . $obligatoryString
+					$this->object->getTitle() . $postponed . $obligatoryString
 				);
 				break;
 		}
+
+        $question_info_tpl = new ilTemplate('tpl.tst_question_info.html', true, true, 'Modules/Test');
+		$question_position = sprintf(
+		    $this->lng->txt("tst_position"),
+            $this->getSequenceNumber(),
+            $this->getQuestionCount()
+        );
+		$question_info_tpl->setVariable('TXT_POSITION_POINTS', $question_position);
+        $page_gui->setQuestionInfoHTML($question_info_tpl->get());
+
 		$presentation = $page_gui->presentation();
-		if (strlen($maxpoints)) {
-			$presentation = str_replace($maxpoints, "<em>$maxpoints</em>", $presentation);
-		}
 		if (strlen($obligatoryString)) {
 			$replacement = '<br><span class="obligatory" style="font-size:small">'
 				. $this->lng->txt("tst_you_have_to_answer_this_question") . '</span>';
